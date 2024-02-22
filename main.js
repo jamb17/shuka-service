@@ -239,6 +239,7 @@ function removeAdditionalOption(i) {
         $('.request-plus-icon').css('opacity', '0');
     };
 }
+
 //Прибавить доп функционал(клик по плюсу в блоке 'Augment your Brand Experience')
 for (let i = 1; i <= $('.additional-cards-container').children().length; i++) {
     $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').click(function () {
@@ -266,15 +267,23 @@ for (let i = 1; i <= $('.additional-cards-container').children().length; i++) {
         if (estimData.additionalOptions.length >= 1) {
             $('.request-plus-icon').css('opacity', '1');
         };
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').removeClass('inactive');
+        $(this).addClass('selected');
     });
     $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').click(function () {
-        removeAdditionalOption(i)
+        removeAdditionalOption(i);
+        $(this).addClass('inactive');
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
     });
     $('.request-item-container').children('.remove-icon').eq(i - 1).click(function () {
-        removeAdditionalOption(i)
+        removeAdditionalOption(i);
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').addClass('inactive');
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
     });
     $('.request-item-container').children('.remove-icon').eq((i - 1) + 8).click(function () {
-        removeAdditionalOption(i)
+        removeAdditionalOption(i);
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').addClass('inactive');
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
     });
 }
 
@@ -302,6 +311,8 @@ function addOptionFromTab(clickedElement) {
     }
     $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     $(clickedElement).parent().parent().children('#amount').text(amount);
+    $(clickedElement).parent().children('.minus-icon').removeClass('inactive');
+    console.log($(clickedElement).parent().children('.minus-icon'));
 }
 
 $('#tab1 #plus-icon').click(function () {
@@ -347,6 +358,7 @@ function removeOptionFromTab(clickedElement) {
             currentElem.amount -= 1;
             $(clickedElement).parent().parent().children('#amount').text(amount - 1);
             estimData.additionalOptions.splice(currentElemIndex, 1);
+            $(clickedElement).addClass('inactive')
         }
     }
     $('#estimField').val(JSON.stringify(estimData, null, '\t'));
