@@ -22,6 +22,14 @@ bgvideos.forEach((e) => {
     }
 });
 
+function changeHighlight() {
+    $('.active-tab-highlight').css({
+        'width': $('.switcher-item.active').innerWidth() + 'px',
+        'left': $('.switcher-item.active').position().left + 'px',
+        'height': $('.switcher-item.active').innerHeight() + 'px'
+    });
+}
+
 //Пролистывание элементов в чекаут баре
 document.addEventListener('DOMContentLoaded', function () {
     const ele = document.getElementById('scrollable-grab-container');
@@ -66,14 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Attach the handler
     ele.addEventListener('mousedown', mouseDownHandler);
 });
-
-function changeHighlight() {
-    $('.active-tab-highlight').css({
-        'width': $('.switcher-item.active').innerWidth() + 'px',
-        'left': $('.switcher-item.active').position().left + 'px',
-        'height': $('.switcher-item.active').innerHeight() + 'px'
-    });
-}
 
 // Скрыть/показать чекаут-бар:
 $(window).scroll(function () {
