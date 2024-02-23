@@ -212,165 +212,167 @@ let estimData = {
 }
 $('#estimField').val(JSON.stringify(estimData, null, '\t')); // перенос данных эстимейта в форму обратной связи
 
-//Убрать / убавить доп функционал (клик по минусу в блоке 'Augment your Brand Experience')  
-function removeAdditionalOption(i) {
-    if ($('.collection-list-4 .w-dyn-item').eq(i - 1).css('display') !== 'none') {
+document.addEventListener('DOMContentLoaded', function () {
+    //Убрать / убавить доп функционал (клик по минусу в блоке 'Augment your Brand Experience')  
+    function removeAdditionalOption(i) {
+        if ($('.collection-list-4 .w-dyn-item').eq(i - 1).css('display') !== 'none') {
+            let price = getPrice();
+            price -= additionalOptions[i - 1].cost;
+            price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+            $('.priceincart').each(function () {
+                $(this).text(price);
+            });
+            estimData.fullPrice = price;
+            estimData.term -= additionalOptions[i - 1].term;
+            $('.term').text(estimData.term);
+            estimData.additionalOptions.splice(estimData.additionalOptions.indexOf($('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).text()), 1);
+            $('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).css('opacity', '0');
+            setTimeout(function () {
+                $('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).css('display', 'none');
+            }, 300)
+            $('.collection-list-4 .w-dyn-item').eq(i - 1).css('opacity', '0');
+            setTimeout(function () {
+                $('.collection-list-4 .w-dyn-item').eq(i - 1).css('display', 'none');
+            }, 300)
+            $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+        }
+        if (estimData.additionalOptions.length === 0) {
+            $('.request-plus-icon').css('opacity', '0');
+        };
+    }
+
+    //Прибавить доп функционал(клик по плюсу в блоке 'Augment your Brand Experience')
+    for (let i = 1; i <= $('.additional-cards-container').children().length; i++) {
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').click(function () {
+            if ($('.collection-list-4 .w-dyn-item').eq(i - 1).css('display') == 'none') {
+                let price = getPrice();
+                price += additionalOptions[i - 1].cost;
+                price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+                $('.priceincart').each(function () {
+                    $(this).text(price);
+                });
+                estimData.fullPrice = price;
+                estimData.term += additionalOptions[i - 1].term;
+                $('.term').text(estimData.term);
+                estimData.additionalOptions.push($('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).text());
+                $('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).css({
+                    'opacity': '1',
+                    'display': 'block'
+                });
+                $('.collection-list-4 .w-dyn-item').eq(i - 1).css({
+                    'opacity': '1',
+                    'display': 'block'
+                });
+                $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+            }
+            if (estimData.additionalOptions.length >= 1) {
+                $('.request-plus-icon').css('opacity', '1');
+            };
+            $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').removeClass('inactive');
+            $(this).addClass('selected');
+        });
+        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').click(function () {
+            removeAdditionalOption(i);
+            $(this).addClass('inactive');
+            $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
+        });
+        $('.request-item-container').children('.remove-icon').eq(i - 1).click(function () {
+            removeAdditionalOption(i);
+            $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').addClass('inactive');
+            $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
+        });
+        $('.request-item-container').children('.remove-icon').eq((i - 1) + 8).click(function () {
+            removeAdditionalOption(i);
+            $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').addClass('inactive');
+            $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
+        });
+    }
+
+    //Добавление доп кол-ва функций из блока табов (клик по плюсу)
+    function addOptionFromTab(clickedElement) {
         let price = getPrice();
-        price -= additionalOptions[i - 1].cost;
+        price += +$(clickedElement).parent().parent().parent().children('.tabitemprice').text();
         price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
         $('.priceincart').each(function () {
             $(this).text(price);
         });
         estimData.fullPrice = price;
-        estimData.term -= additionalOptions[i - 1].term;
+        estimData.term += +$(clickedElement).parent().parent().parent().children('.tabitemterm').text();
         $('.term').text(estimData.term);
-        estimData.additionalOptions.splice(estimData.additionalOptions.indexOf($('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).text()), 1);
-        $('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).css('opacity', '0');
-        setTimeout(function () {
-            $('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).css('display', 'none');
-        }, 300)
-        $('.collection-list-4 .w-dyn-item').eq(i - 1).css('opacity', '0');
-        setTimeout(function () {
-            $('.collection-list-4 .w-dyn-item').eq(i - 1).css('display', 'none');
-        }, 300)
+        let name = $(clickedElement).parent().parent().parent().children('#card-name').text();
+        let amount = Number($(clickedElement).parent().parent().children('#amount').text());
+        amount += 1;
+        if (typeof estimData.additionalOptions.find(elem => elem.name === name) === 'undefined') {
+            estimData.additionalOptions.push({
+                name: name,
+                amount: amount
+            });
+        } else {
+            estimData.additionalOptions.find(elem => elem.name === name).amount = amount;
+        }
+        $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+        $(clickedElement).parent().parent().children('#amount').text(amount);
+        $(clickedElement).parent().children('.minus-icon').removeClass('inactive');
+    }
+
+    $('#tab1 #plus-icon').click(function () {
+        addOptionFromTab(this);
+    });
+    $('#tab2 #plus-icon').click(function () {
+        addOptionFromTab(this);
+    });
+    $('#tab3 #plus-icon').click(function () {
+        addOptionFromTab(this);
+    });
+
+    //Убавление доп кол-ва функций из блока табов (клик по минусу)
+    function removeOptionFromTab(clickedElement) {
+        let name = $(clickedElement).parent().parent().parent().children('#card-name').text();
+        let amount = Number($(clickedElement).parent().parent().children('#amount').text());
+        let currentElem = estimData.additionalOptions.find(elem => elem.name === name);
+        if (typeof currentElem !== 'undefined') {
+            let currentElemIndex = estimData.additionalOptions.findIndex(elem => elem.name === name);
+            let currentElemPrice = +$(clickedElement).parent().parent().parent().children('.tabitemprice').text();
+            let currentElemTerm = +$(clickedElement).parent().parent().parent().children('.tabitemterm').text();
+            let price = getPrice();
+            if (currentElem.amount > 1) {
+                price -= currentElemPrice;
+                price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+                $('.priceincart').each(function () {
+                    $(this).text(price);
+                });
+                estimData.fullPrice = price;
+                estimData.term -= currentElemTerm;
+                $('.term').text(estimData.term);
+                currentElem.amount -= 1;
+                $(clickedElement).parent().parent().children('#amount').text(amount - 1);
+            } else {
+                price -= currentElemPrice;
+                price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+                $('.priceincart').each(function () {
+                    $(this).text(price);
+                });
+                estimData.fullPrice = price;
+                estimData.term -= currentElemTerm;
+                $('.term').text(estimData.term);
+                currentElem.amount -= 1;
+                $(clickedElement).parent().parent().children('#amount').text(amount - 1);
+                estimData.additionalOptions.splice(currentElemIndex, 1);
+                $(clickedElement).addClass('inactive')
+            }
+        }
         $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     }
-    if (estimData.additionalOptions.length === 0) {
-        $('.request-plus-icon').css('opacity', '0');
-    };
-}
-
-//Прибавить доп функционал(клик по плюсу в блоке 'Augment your Brand Experience')
-for (let i = 1; i <= $('.additional-cards-container').children().length; i++) {
-    $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').click(function () {
-        if ($('.collection-list-4 .w-dyn-item').eq(i - 1).css('display') == 'none') {
-            let price = getPrice();
-            price += additionalOptions[i - 1].cost;
-            price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-            $('.priceincart').each(function () {
-                $(this).text(price);
-            });
-            estimData.fullPrice = price;
-            estimData.term += additionalOptions[i - 1].term;
-            $('.term').text(estimData.term);
-            estimData.additionalOptions.push($('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).text());
-            $('.collection-list-wrapper-static-basket .w-dyn-item').eq(i - 1).css({
-                'opacity': '1',
-                'display': 'block'
-            });
-            $('.collection-list-4 .w-dyn-item').eq(i - 1).css({
-                'opacity': '1',
-                'display': 'block'
-            });
-            $('#estimField').val(JSON.stringify(estimData, null, '\t'));
-        }
-        if (estimData.additionalOptions.length >= 1) {
-            $('.request-plus-icon').css('opacity', '1');
-        };
-        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').removeClass('inactive');
-        $(this).addClass('selected');
+    $('#tab1 #minus-icon').click(function () {
+        removeOptionFromTab(this);
     });
-    $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').click(function () {
-        removeAdditionalOption(i);
-        $(this).addClass('inactive');
-        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
+    $('#tab2 #minus-icon').click(function () {
+        removeOptionFromTab(this);
     });
-    $('.request-item-container').children('.remove-icon').eq(i - 1).click(function () {
-        removeAdditionalOption(i);
-        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').addClass('inactive');
-        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
+    $('#tab3 #minus-icon').click(function () {
+        removeOptionFromTab(this);
     });
-    $('.request-item-container').children('.remove-icon').eq((i - 1) + 8).click(function () {
-        removeAdditionalOption(i);
-        $('.additional-cards-container .item-container').eq(i - 1).children().children('#minus-icon').addClass('inactive');
-        $('.additional-cards-container .item-container').eq(i - 1).children().children('#plus-icon').removeClass('selected');
-    });
-}
-
-//Добавление доп кол-ва функций из блока табов (клик по плюсу)
-function addOptionFromTab(clickedElement) {
-    let price = getPrice();
-    price += +$(clickedElement).parent().parent().parent().children('.tabitemprice').text();
-    price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-    $('.priceincart').each(function () {
-        $(this).text(price);
-    });
-    estimData.fullPrice = price;
-    estimData.term += +$(clickedElement).parent().parent().parent().children('.tabitemterm').text();
-    $('.term').text(estimData.term);
-    let name = $(clickedElement).parent().parent().parent().children('#card-name').text();
-    let amount = Number($(clickedElement).parent().parent().children('#amount').text());
-    amount += 1;
-    if (typeof estimData.additionalOptions.find(elem => elem.name === name) === 'undefined') {
-        estimData.additionalOptions.push({
-            name: name,
-            amount: amount
-        });
-    } else {
-        estimData.additionalOptions.find(elem => elem.name === name).amount = amount;
-    }
-    $('#estimField').val(JSON.stringify(estimData, null, '\t'));
-    $(clickedElement).parent().parent().children('#amount').text(amount);
-    $(clickedElement).parent().children('.minus-icon').removeClass('inactive');
-}
-
-$('#tab1 #plus-icon').click(function () {
-    addOptionFromTab(this);
-});
-$('#tab2 #plus-icon').click(function () {
-    addOptionFromTab(this);
-});
-$('#tab3 #plus-icon').click(function () {
-    addOptionFromTab(this);
-});
-
-//Убавление доп кол-ва функций из блока табов (клик по минусу)
-function removeOptionFromTab(clickedElement) {
-    let name = $(clickedElement).parent().parent().parent().children('#card-name').text();
-    let amount = Number($(clickedElement).parent().parent().children('#amount').text());
-    let currentElem = estimData.additionalOptions.find(elem => elem.name === name);
-    if (typeof currentElem !== 'undefined') {
-        let currentElemIndex = estimData.additionalOptions.findIndex(elem => elem.name === name);
-        let currentElemPrice = +$(clickedElement).parent().parent().parent().children('.tabitemprice').text();
-        let currentElemTerm = +$(clickedElement).parent().parent().parent().children('.tabitemterm').text();
-        let price = getPrice();
-        if (currentElem.amount > 1) {
-            price -= currentElemPrice;
-            price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-            $('.priceincart').each(function () {
-                $(this).text(price);
-            });
-            estimData.fullPrice = price;
-            estimData.term -= currentElemTerm;
-            $('.term').text(estimData.term);
-            currentElem.amount -= 1;
-            $(clickedElement).parent().parent().children('#amount').text(amount - 1);
-        } else {
-            price -= currentElemPrice;
-            price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-            $('.priceincart').each(function () {
-                $(this).text(price);
-            });
-            estimData.fullPrice = price;
-            estimData.term -= currentElemTerm;
-            $('.term').text(estimData.term);
-            currentElem.amount -= 1;
-            $(clickedElement).parent().parent().children('#amount').text(amount - 1);
-            estimData.additionalOptions.splice(currentElemIndex, 1);
-            $(clickedElement).addClass('inactive')
-        }
-    }
-    $('#estimField').val(JSON.stringify(estimData, null, '\t'));
-}
-$('#tab1 #minus-icon').click(function () {
-    removeOptionFromTab(this);
-});
-$('#tab2 #minus-icon').click(function () {
-    removeOptionFromTab(this);
-});
-$('#tab3 #minus-icon').click(function () {
-    removeOptionFromTab(this);
-});
+})
 
 //Получение цены в виде числа
 function getPrice() {
