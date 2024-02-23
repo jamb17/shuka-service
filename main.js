@@ -312,7 +312,6 @@ function addOptionFromTab(clickedElement) {
     $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     $(clickedElement).parent().parent().children('#amount').text(amount);
     $(clickedElement).parent().children('.minus-icon').removeClass('inactive');
-    console.log($(clickedElement).parent().children('.minus-icon'));
 }
 
 $('#tab1 #plus-icon').click(function () {
