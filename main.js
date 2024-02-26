@@ -240,9 +240,9 @@ function removeAdditionalOption(i) {
         $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     }
     if (estimData.additionalOptions.length === 0) {
+        $('.request-item.no-choosen-items').css('display', 'block');
         $('.request-plus-icon').css('opacity', '0');
     };
-    $('.request-item.no-choosen-items').css('display', 'block');
 }
 
 //Прибавить доп функционал(клик по плюсу в блоке 'Augment your Brand Experience')
