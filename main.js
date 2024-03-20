@@ -109,7 +109,7 @@ $(window).scroll(function () {
     let additionalOptionsAreVisible = !(viewport.right < bounds2.left || viewport.left > bounds2.right || viewport.bottom < bounds2.top || viewport.top > bounds2.bottom);
     let chekoutFormIsVisible = !(viewport.right < bounds3.left || viewport.left > bounds3.right || viewport.bottom < bounds3.top || viewport.top > bounds3.bottom)
 
-    if (tabsAreVisible || additionalOptionsAreVisible) {
+    if (tabsAreVisible || additionalOptionsAreVisible && !chekoutFormIsVisible) {
         let innerHeight = $('.chekout-bar').innerHeight();
         $('.cookie-banner').css('transform', `translateY(-${innerHeight}px)`)
         $('.chekout-bar').css('transform', 'translateY(0px)')
