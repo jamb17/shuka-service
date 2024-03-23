@@ -172,7 +172,7 @@ function openPopupContainer(i, index, cardList) {
 
 for (let i = 0; i < $('#tab1 .item-container').length; i++) {
     $('#tab1 .item-container').eq(i).click(function (e) {
-        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon') {
+        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon' && e.target.className !== 'div-block-43') {
             openPopupContainer(i, 0, 'Start')
         }
     })
@@ -185,7 +185,7 @@ $('.image-3').click(function () {
 
 for (let i = 0; i < $('#tab2 .item-container').length; i++) {
     $('#tab2 .item-container').eq(i).click(function (e) {
-        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon') {
+        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon' && e.target.className !== 'div-block-43') {
             openPopupContainer(i, 1, 'Transform')
         }
     })
@@ -193,7 +193,7 @@ for (let i = 0; i < $('#tab2 .item-container').length; i++) {
 
 for (let i = 0; i < $('#tab3 .item-container').length; i++) {
     $('#tab3 .item-container').eq(i).click(function (e) {
-        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon') {
+        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon' && e.target.className !== 'div-block-43') {
             openPopupContainer(i, 2, 'Advance')
         }
     })
@@ -201,7 +201,7 @@ for (let i = 0; i < $('#tab3 .item-container').length; i++) {
 
 for (let i = 0; i < $('.additional-cards-container').children().length; i++) {
     $('.additional-cards-container .item-container').eq(i).click(function (e) {
-        if (e.target.id !== 'minus-icon' && e.target.id !== 'plus-icon') {
+        if (e.target.id !== 'plus-icon' && e.target.id !== 'minus-icon' && e.target.className !== 'div-block-30') {
             openPopupContainer(i, 3, 'additional')
         }
     })
