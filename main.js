@@ -6,6 +6,13 @@ $('#learn-more-popup-close').click(() => {
     $("body").css('overflow', 'auto');
 });
 
+//Клик вне контейнера попапов
+$('.collection-list-wrapper-4').click(function (e) {
+    if (!$('.collection-item-3').is(e.target) && $('.collection-item-3').has(e.target).length === 0 ) {
+        $('.image-3').trigger('click')
+    }
+})
+
 //Проигрывание фоновых видео при наведении мыши
 let bgvideos = document.querySelectorAll('.hoverplay');
 
