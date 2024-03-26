@@ -13,7 +13,7 @@ $('.collection-list-wrapper-4').click(function (e) {
     }
 })
 $('.popup').click(function (e) {
-    if (!$('.div-block-40').is(e.target) && $('.div-block-40').has(e.target).length === 0 ) {
+    if (!$('.div-block-40').is(e.target) && $('.div-block-40').has(e.target).length === 0 && !$('.image-3').is(e.target)) {
         $('.image-3').trigger('click')
     }
 })
