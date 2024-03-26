@@ -139,15 +139,13 @@ $(window).scroll(function () {
         $('.cookie-banner').css('transform', 'translateY(0px)')
         $('.chekout-bar').css('transform', 'translateY(371px)');
     }
-
-    if ((distance <= -switchersHeight) && !chekoutFormIsVisible) {
+    if (tabsAreVisible) {
         $('.switchers-container').addClass('fixed')
         changeHighlight();
-    } else if ( distance = -switchersHeight) {
+    } else {
         $('.switchers-container').removeClass('fixed')
         changeHighlight();
     }
-
 });
 
 // Анимация переключения табов
