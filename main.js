@@ -12,6 +12,11 @@ $('.collection-list-wrapper-4').click(function (e) {
         $('.image-3').trigger('click')
     }
 })
+$('.popup').click(function (e) {
+    if (!$('.div-block-40').is(e.target) && $('.div-block-40').has(e.target).length === 0 ) {
+        $('.image-3').trigger('click')
+    }
+})
 
 //Проигрывание фоновых видео при наведении мыши
 let bgvideos = document.querySelectorAll('.hoverplay');
