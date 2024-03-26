@@ -9,12 +9,22 @@ $('#learn-more-popup-close').click(() => {
 //Клик вне контейнера попапов
 $('.collection-list-wrapper-4').click(function (e) {
     if (!$('.collection-item-3').is(e.target) && $('.collection-item-3').has(e.target).length === 0 ) {
-        $('.image-3').trigger('click')
+        $('.collection-item-3').css('opacity', '0');
+        $('.plan-cards-popups').css('opacity', '0');
+        setTimeout(() => {
+            $('.collection-item-3').css('display', 'none');
+            $('.plan-cards-popups').css('display', 'none');
+            $("body").css('overflow', 'auto');
+        }, 200);
     }
 })
 $('.popup').click(function (e) {
-    if (!$('.div-block-40').is(e.target) && $('.div-block-40').has(e.target).length === 0 && !$('.image-3').is(e.target)) {
-        $('.image-3').trigger('click')
+    if (!$('.div-block-40').is(e.target) && $('.div-block-40').has(e.target).length === 0) {
+        $('.popup').css('opacity', '0');
+        setTimeout(() => {
+            $('.popup').css('display', 'none');
+            $("body").css('overflow', 'auto');
+        }, 350);
     }
 })
 
