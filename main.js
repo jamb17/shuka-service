@@ -735,6 +735,13 @@ $('#show-Branding-Details').click(function () {
 
 $('.mh-menu-icon').click(function () {
     $('.mobile-header').toggleClass('active')
+    if ($('.mobile-header').hasClass('active')) {
+        $("body").css('overflow', 'hidden');
+        $('.header-body-blur').css('opacity', '1')
+    } else {
+        $("body").css('overflow', 'auto');
+        $('.header-body-blur').css('opacity', '0')
+    }
 })
 
 $('.close-success-btn').click(function () {
