@@ -140,21 +140,21 @@ $(window).scroll(function () {
         $('.chekout-bar').css('transform', 'translateY(371px)');
     }
 
-    if (tabsAreVisible) {
-        $('.switchers-container').addClass('fixed')
-        changeHighlight();
-    } else {
-        $('.switchers-container').removeClass('fixed')
-        changeHighlight();
-    }
-
-    // if ((distance <= -switchersHeight) && !chekoutFormIsVisible) {
+    // if (tabsAreVisible) {
     //     $('.switchers-container').addClass('fixed')
     //     changeHighlight();
-    // } else if ( distance = -switchersHeight || !tabsAreVisible) {
+    // } else {
     //     $('.switchers-container').removeClass('fixed')
     //     changeHighlight();
     // }
+
+    if ((distance <= -switchersHeight) && !chekoutFormIsVisible) {
+        $('.switchers-container').addClass('fixed')
+        changeHighlight();
+    } else if ( distance = -switchersHeight || !tabsAreVisible) {
+        $('.switchers-container').removeClass('fixed')
+        changeHighlight();
+    }
 
 });
 
