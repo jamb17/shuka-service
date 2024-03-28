@@ -151,7 +151,7 @@ $(window).scroll(function () {
     if ((distance <= -switchersHeight) && !chekoutFormIsVisible) {
         $('.switchers-container').addClass('fixed')
         changeHighlight();
-    } else if ( distance = -switchersHeight || !tabsAreVisible) {
+    } else if (distance = -switchersHeight || !tabsAreVisible) {
         $('.switchers-container').removeClass('fixed')
         changeHighlight();
     }
@@ -258,6 +258,57 @@ let estimData = {
 }
 $('#estimField').val(JSON.stringify(estimData, null, '\t')); // перенос данных эстимейта в форму обратной связи
 
+function resetEstimData(plan, planPrice) {
+    $('.w-tab-pane .amount').text(0);
+    let minusIcon = document.querySelectorAll('.w-tab-pane .minus-icon')
+    minusIcon.forEach(e => {
+        if (!e.classList.contains('inactive')) {
+            e.classList.add('inactive')
+        }
+    });
+    $('.chekout-bar .w-dyn-item:visible').each(function () {
+        if ($(this).attr('id') == 'clonedItem') {
+            $(this).remove()
+        } else {
+            $(this).css('opacity', '0');
+            $(this).css('display', 'none');
+        }
+    })
+    $('.collection-list-several-options-static-basket .w-dyn-item').each(function () {
+        if ($(this).attr('id') == 'clonedItem') {
+            $(this).remove()
+        } else {
+            $(this).css('opacity', '0');
+            $(this).css('display', 'none');
+        }
+    })
+    $('.collection-list-wrapper-static-basket .w-dyn-item').css('opacity', '0');
+    setTimeout(function () {
+        $('.collection-list-wrapper-static-basket .w-dyn-item').css('display', 'none');
+    }, 300)
+    $('.request-plus-icon').css('opacity', '0');
+    $('.request-item.no-choosen-items').css('display', 'block');
+    if ($('#show-Branding-Details').text() !== 'Hide details') {
+        $('.request-items-list.main').css('max-height', '80px');
+    }
+    $('.branding-bundle-bottom').hide();
+    $('.plus-icon').removeClass('selected')
+    $('.additional-option-cards .minus-icon').addClass('inactive')
+    $('.cartplan').each(function () {
+        $(this).text(plan);
+    });
+    estimData = {
+        plan: plan,
+        fullPrice: planPrice,
+        term: 2,
+        additionalOptions: []
+    }
+    $('.priceincart').each(function () {
+        $(this).text(estimData.fullPrice);
+    });
+    $('.term').text(estimData.term);
+    $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+}
 
 //Убрать / убавить доп функционал (клик по минусу в блоке 'Augment your Brand Experience')  
 function removeAdditionalOption(i) {
@@ -287,8 +338,7 @@ function removeAdditionalOption(i) {
         }
         $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     }
-    if (estimData.additionalOptions.length === 0) {
-        $('.request-plus-icon').css('opacity', '0');
+    if ($('.collection-list-wrapper-static-basket .collection-item-2 .request-item-container:visible').length === 1) {
         $('.request-item.no-choosen-items').css('display', 'block');
     };
 }
@@ -402,6 +452,7 @@ function addOptionFromTab(clickedElement) {
         });
     }
     let newItem = $('.chekout-bar .w-dyn-item').first().clone()
+    newItem.attr('id', 'clonedItem')
     newItem.css({
         'display': 'flex',
         'opacity': '1'
@@ -460,7 +511,6 @@ function removeOptionFromTab(clickedElement) {
             estimData.term -= currentElemTerm;
             $('.term').text(estimData.term);
             currentElem.amount -= 1;
-            // $(clickedElement).parent().parent().children('#amount').text(amount - 1);
         } else {
             price -= currentElemPrice;
             price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
@@ -471,7 +521,6 @@ function removeOptionFromTab(clickedElement) {
             estimData.term -= currentElemTerm;
             $('.term').text(estimData.term);
             currentElem.amount -= 1;
-            // $(clickedElement).parent().parent().children('#amount').text(amount - 1);
             estimData.additionalOptions.splice(currentElemIndex, 1);
             $(clickedElement).addClass('inactive')
         }
@@ -516,9 +565,6 @@ function removeOptionFromTab(clickedElement) {
                 break;
             }
         }
-        if ($('.chekout-bar .collection-list-4 .w-dyn-item:visible').length == 0) {
-            $('.chekout-bar .request-plus-icon').css('opacity', '0');
-        }
         $('.amount').each(function () {
             if ($(this).parent().parent().children('.card-name').text() == name) {
                 $(this).text(amount - 1)
@@ -526,6 +572,9 @@ function removeOptionFromTab(clickedElement) {
         })
         $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     }
+    if ($('.collection-list-wrapper-static-basket .collection-item-2 .request-item-container:visible').length === 0) {
+        $('.request-item.no-choosen-items').css('display', 'block');
+    };
 }
 $('#tab1 #minus-icon').click(function () {
     removeOptionFromTab(this);
@@ -557,34 +606,35 @@ function getPrice() {
 
 // Клики по вкладкам табов 
 $('#basicTab').click(() => {
-    let price = getPrice();
-    if ($('.cartplan').first().text() == "Transform") {
-        price = price - transformPrice + startPrice;
-        price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-        $('.priceincart').each(function () {
-            $(this).text(price);
-        });
-        $('.cartplan').each(function () {
-            $(this).text("Start");
-        });
-        estimData.fullPrice = price;
-    } else if ($('.cartplan').first().text() == "Advance") {
-        price = price - advancePrice + startPrice;
-        price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-        $('.priceincart').each(function () {
-            $(this).text(price);
-        });
-        $('.cartplan').each(function () {
-            $(this).text("Start");
-        });
-        estimData.fullPrice = price;
-    }
+    // let price = getPrice();
+    // if ($('.cartplan').first().text() == "Transform") {
+    //     price = price - transformPrice + startPrice;
+    //     price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+    //     $('.priceincart').each(function () {
+    //         $(this).text(price);
+    //     });
+    //     $('.cartplan').each(function () {
+    //         $(this).text("Start");
+    //     });
+    //     estimData.fullPrice = price;
+    // } else if ($('.cartplan').first().text() == "Advance") {
+    //     price = price - advancePrice + startPrice;
+    //     price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+    //     $('.priceincart').each(function () {
+    //         $(this).text(price);
+    //     });
+    //     $('.cartplan').each(function () {
+    //         $(this).text("Start");
+    //     });
+    //     estimData.fullPrice = price;
+    // }
+    resetEstimData('Start', startPrice)
     $('.picked-plan-icon').css({
         'top': "16px",
         'bottom': 'unset'
     });
-    estimData.plan = 'Start';
-    $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+    // estimData.plan = 'Start';
+    // $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     currentBundle = 1;
     if ($('#show-Branding-Details').text() == 'Hide details') {
         handleBrandingBundleDetails(1)
@@ -592,34 +642,35 @@ $('#basicTab').click(() => {
 });
 
 $('#standardTab').click(() => {
-    let price = getPrice();
-    if ($('.cartplan').first().text() == "Start") {
-        price = price - startPrice + transformPrice;
-        price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-        $('.priceincart').each(function () {
-            $(this).text(price);
-        });
-        $('.cartplan').each(function () {
-            $(this).text("Transform");
-        });
-        estimData.fullPrice = price;
-    } else if ($('.cartplan').first().text() == "Advance") {
-        price = price - advancePrice + transformPrice;
-        price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-        $('.priceincart').each(function () {
-            $(this).text(price);
-        });
-        $('.cartplan').each(function () {
-            $(this).text("Transform");
-        });
-        estimData.fullPrice = price;
-    }
+    // let price = getPrice();
+    // if ($('.cartplan').first().text() == "Start") {
+    //     price = price - startPrice + transformPrice;
+    //     price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+    //     $('.priceincart').each(function () {
+    //         $(this).text(price);
+    //     });
+    //     $('.cartplan').each(function () {
+    //         $(this).text("Transform");
+    //     });
+    //     estimData.fullPrice = price;
+    // } else if ($('.cartplan').first().text() == "Advance") {
+    //     price = price - advancePrice + transformPrice;
+    //     price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+    //     $('.priceincart').each(function () {
+    //         $(this).text(price);
+    //     });
+    //     $('.cartplan').each(function () {
+    //         $(this).text("Transform");
+    //     });
+    //     estimData.fullPrice = price;
+    // }
+    resetEstimData('Transform', transformPrice)
     $('.picked-plan-icon').css({
         'top': "40%",
         'bottom': 'unset'
     });
-    estimData.plan = 'Transform';
-    $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+    // estimData.plan = 'Transform';
+    // $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     currentBundle = 2;
     if ($('#show-Branding-Details').text() == 'Hide details') {
         handleBrandingBundleDetails(2)
@@ -627,34 +678,35 @@ $('#standardTab').click(() => {
 });
 
 $('#ultimateTab').click(() => {
-    let price = getPrice();
-    if ($('.cartplan').first().text() == "Start") {
-        price = price - startPrice + advancePrice;
-        price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-        $('.priceincart').each(function () {
-            $(this).text(price);
-        });
-        $('.cartplan').each(function () {
-            $(this).text("Advance");
-        });
-        estimData.fullPrice = price;
-    } else if ($('.cartplan').first().text() == "Transform") {
-        price = price - transformPrice + advancePrice;
-        price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
-        $('.priceincart').each(function () {
-            $(this).text(price);
-        });
-        $('.cartplan').each(function () {
-            $(this).text("Advance");
-        });
-        estimData.fullPrice = price;
-    }
+    // let price = getPrice();
+    // if ($('.cartplan').first().text() == "Start") {
+    //     price = price - startPrice + advancePrice;
+    //     price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+    //     $('.priceincart').each(function () {
+    //         $(this).text(price);
+    //     });
+    //     $('.cartplan').each(function () {
+    //         $(this).text("Advance");
+    //     });
+    //     estimData.fullPrice = price;
+    // } else if ($('.cartplan').first().text() == "Transform") {
+    //     price = price - transformPrice + advancePrice;
+    //     price = String(price).slice(0, 2) + ' ' + String(price).slice(2);
+    //     $('.priceincart').each(function () {
+    //         $(this).text(price);
+    //     });
+    //     $('.cartplan').each(function () {
+    //         $(this).text("Advance");
+    //     });
+    //     estimData.fullPrice = price;
+    // }
+    resetEstimData('Advance', advancePrice)
     $('.picked-plan-icon').css({
         'top': "unset",
         'bottom': '16px'
     });
-    estimData.plan = 'Advance';
-    $('#estimField').val(JSON.stringify(estimData, null, '\t'));
+    // estimData.plan = 'Advance';
+    // $('#estimField').val(JSON.stringify(estimData, null, '\t'));
     currentBundle = 3;
     if ($('#show-Branding-Details').text() == 'Hide details') {
         handleBrandingBundleDetails(3)
